@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "artnum": "123456",
+    "description": "Mixer",
+    "quantity": "2000"
+  },
+  {
+    "id": "2",
+    "artnum": "234567",
+    "description": "Piston",
+    "quantity": "3000"
+  }
+]
