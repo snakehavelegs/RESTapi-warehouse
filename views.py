@@ -3,8 +3,7 @@ from webargs import fields
 from webargs.aiohttpparser import use_args 
 import psycopg2
 import json
-from elasticsearch_dsl import Q
-from models import Warehouse
+
 
 
 args = {
@@ -27,10 +26,6 @@ with open("warehouse.json") as jsonFile:
     jsonFile.close()
 
 
-
-
-	
-
 @routes.get('/menu', name='menu')
 async def menu(request):
 	return web.Response(body='<h1>Menu</h1>', content_type='text/html')
@@ -50,19 +45,7 @@ async def printing(request):
 @routes.get('/info', name='info')
 @use_args(args, location='query')
 async def info(request, args: dict):
-	query = Q()
-	
-	if 'description' in args:
-		query = query & Q('match', description={'query': args['description']})
-	
-	search = Warehouse.search()
-	search.query = query
 
-	result =search.execute()
-
-	return web.json_response(data=[
-		warehouse.to_dict()
-		for goods in result.hits
-		],
+	return web.json_response(data=jsonObject,
 		content_type='application/json'
 	)
