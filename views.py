@@ -3,12 +3,15 @@ from webargs import fields
 from webargs.aiohttpparser import use_args 
 import psycopg2
 import json
-from psycopg2.extras import RealDictCursor
+from elasticsearch_dsl import Q
+from models import Warehouse
+
+
 args = {
-		'id': fields.Int(required=False),
-		'artnum': fields.Int(required=False),
-		'description': fields.Str(required=False),
-		'quantity': fields.Int(required=False)
+		'id': fields.List(fields.Int(), required=False),
+		'artnum': fields.List(fields.Int(), required=False),
+		'description': fields.List(fields.Str(), required=False),
+		'quantity': fields.List(fields.Int(), required=False)
 	}
 
 conn = psycopg2.connect("dbname=warehouse user=admin password=admin")
@@ -29,18 +32,37 @@ with open("warehouse.json") as jsonFile:
 	
 
 @routes.get('/menu', name='menu')
-@use_args(args, location='query')
-async def menu(request, args: dict):
-	return web.json_response(data=jsonObject, content_type='application/json')
+async def menu(request):
+	return web.Response(body='<h1>Menu</h1>', content_type='text/html')
+
 @routes.get('/goods', name='goods')
 async def goods(request):
 	return web.Response(body='<h1>Goods Receipt</h1>', content_type='text/html')
+
 @routes.get('/stock', name='stock')
 async def stock(request):
 	return web.Response(body='<h1>Stock Transfer</h1>', content_type='text/html')
+
 @routes.get('/print', name='print')
 async def printing(request):
 	return web.Response(body='<h1>Printing</h1>', content_type='text/html')
+
 @routes.get('/info', name='info')
-async def information(request):
-	return web.Response(body='<h1>Information</h1>', content_type='text/html')
+@use_args(args, location='query')
+async def info(request, args: dict):
+	query = Q()
+	
+	if 'description' in args:
+		query = query & Q('match', description={'query': args['description']})
+	
+	search = Warehouse.search()
+	search.query = query
+
+	result =search.execute()
+
+	return web.json_response(data=[
+		warehouse.to_dict()
+		for goods in result.hits
+		],
+		content_type='application/json'
+	)

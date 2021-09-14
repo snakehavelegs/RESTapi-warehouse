@@ -1,1 +1,2 @@
-config.py
+import psycopg2
+
