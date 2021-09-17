@@ -1,0 +1,28 @@
+Hey
+It's book of my past knowledge! :)
+
+
+[1]
+	Here was problem with "
+	async def goods(request):
+	data = await request.post()
+	'''
+	if data:
+		item = data['item']
+		todb = input_analyzer.analyzer(item)
+	'''
+	without 'if data' statement my app does sometimes work and sometimes not
+	How i solved? Here's my theory:
+	asynchronous code have been trying to do next steps when request.post was in infinite awaiting
+	so that's why I've seen an error:
+
+Traceback (most recent call last):
+  File "C:\Users\artte\AppData\Local\Programs\Python\Python38-32\lib\site-packages\aiohttp\web_protocol.py", line 422, in _handle_request
+    resp = await self._request_handler(request)
+  File "C:\Users\artte\AppData\Local\Programs\Python\Python38-32\lib\site-packages\aiohttp\web_app.py", line 499, in _handle
+    resp = await handler(request)
+  File "C:\Users\artte\AppData\Local\Programs\Python\Python38-32\lib\site-packages\aiohttp_jinja2\__init__.py", line 227, in wrapped
+    context = await coro(*args)
+  File "C:\pythonstuff\projects\restapi\sap\views.py", line 36, in goods
+    item = data['item']
+KeyError: 'item'
