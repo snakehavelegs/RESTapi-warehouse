@@ -37,7 +37,9 @@ async def goods(request):
 	#DISCLAIMER!!! Here I've got a problem to solve it in future check my problemsolved.txt :) [1]
 	if data:
 		item = data['item']
-		todb = input_analyzer.analyzer(item)
+		init_analyzer = input_analyzer()
+		init_analyzer.analyzer(item)
+		
 		#CONTINUE BELOW HERE
 		'''id_col = (input_analyzer.analyzer.oneitem[0],
 			input_analyzer.analyzer.oneitem[1],

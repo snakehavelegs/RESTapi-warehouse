@@ -1,7 +1,8 @@
 class names:
-	def func(name):
-  		names.func.variable = name.split(',')
+	def func(self, name):
+  		self.variable = name.split(',')
 
-names.func(name='foo, bar')
+name = names()
+name.func('foo, bar')
 
-print(names.func.variable)
+print(name.variable)
