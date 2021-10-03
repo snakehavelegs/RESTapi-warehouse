@@ -2,6 +2,7 @@ from aiohttp import web
 from webargs import fields
 from webargs.aiohttpparser import use_args 
 import psycopg2
+from psycopg2 import sql 
 import jinja2
 import aiohttp_jinja2
 import json
@@ -16,8 +17,7 @@ args = {
 		'quantity': fields.List(fields.Int(), required=False)
 	}
 
-conn = psycopg2.connect("dbname=warehouse user=admin password=admin")
-cur = conn.cursor()
+
 
 
 routes = web.RouteTableDef()
@@ -39,19 +39,17 @@ async def goods(request):
 		item = data['item']
 		init_analyzer = input_analyzer()
 		init_analyzer.analyzer(item)
-		
-		#CONTINUE BELOW HERE
-		'''id_col = (input_analyzer.analyzer.oneitem[0],
-			input_analyzer.analyzer.oneitem[1],
- 			input_analyzer.analyzer.oneitem[2],
-			input_analyzer.analyzer.oneitem[3],
-			)
+
 		conn = psycopg2.connect("dbname=warehouse user=admin password=admin")
 		cur = conn.cursor()
-		cur.execute("INSERT INTO goods VALUES (%s)", (id_col))'''
+		query = sql.SQL("INSERT INTO goods (id, artnum, description, quantity) VALUES (%s, %s, %s, %s)")
+		cur.execute(query, init_analyzer.analyzed)
+		conn.commit()
+		cur.close()
+		conn.close()
 
 	#declare func of class which will analyse our data (we need: 4 columns splitted by colons)
-	#cur.execute("INSERT INTO warehouse VALUES (%s)", (todb))
+	
 
 @routes.get('/stock', name='stock')
 async def stock(request):
